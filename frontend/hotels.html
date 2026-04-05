@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hotels — WanderWay</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">Wander<span>Way</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="destinations.html">Trips</a>
+    <a href="hotels.html" class="active">Hotels</a>
+    <a href="cabs.html">Cabs</a>
+    <a href="combos.html">Combos</a>
+    <a href="mybookings.html">My Bookings</a>
+    <span id="nav-user"></span>
+    <a href="login.html" class="btn-nav">Login</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>🏨 Hotel Booking</h1>
+  <p>Find the best hotels near your destination</p>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div id="page-alert"></div>
+    <div style="margin-bottom:1.5rem;">
+      <input type="text" id="hotel-search" placeholder="Search by name or location..." style="width:100%; max-width:400px; padding:0.65rem 1rem; border:1.5px solid #e5e0d8; border-radius:8px; font-family:inherit; font-size:0.95rem; outline:none;"/>
+    </div>
+    <div class="cards-grid" id="hotels-grid">
+      <p class="text-muted">Loading...</p>
+    </div>
+  </div>
+</section>
+
+<!-- BOOKING MODAL (same structure reused) -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="booking-item-name">Book Hotel</h3>
+      <button class="modal-close" onclick="closeModal('booking-modal')">✕</button>
+    </div>
+    <div id="modal-alert"></div>
+    <form id="booking-form">
+      <div class="form-group">
+        <label>Check-in Date</label>
+        <input type="date" id="booking-date" required/>
+      </div>
+      <div class="form-group">
+        <label id="booking-type-label">Nights</label>
+        <input type="number" id="booking-qty" value="1" min="1" max="30" required/>
+      </div>
+      <div class="form-group">
+        <label>Special Requests (optional)</label>
+        <textarea id="booking-notes" rows="2" placeholder="Room preference, early check-in, etc."></textarea>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding:0.75rem; background:var(--gray-light); border-radius:8px;">
+        <span style="color:var(--gray); font-size:0.9rem;">Per night: <span id="booking-unit-price">₹0</span></span>
+        <span style="font-weight:700; font-size:1.1rem; color:var(--primary)">Total: <span id="booking-total">₹0</span></span>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Confirm Booking ✓</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>© 2024 <span>WanderWay</span></p></footer>
+<script src="app.js"></script>
+</body>
+</html>

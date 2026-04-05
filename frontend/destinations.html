@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Destinations — WanderWay</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .dest-card { cursor: pointer; }
+    .dest-card .card-img { height: 220px; object-fit: cover; width: 100%; display: block; }
+
+    /* Detail panel */
+    .detail-panel {
+      display: none;
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      margin-bottom: 2rem;
+      overflow: hidden;
+    }
+    .detail-panel.open { display: block; }
+    .detail-hero {
+      position: relative;
+      height: 280px;
+    }
+    .detail-hero img {
+      width: 100%; height: 100%; object-fit: cover; display: block;
+    }
+    .detail-hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%);
+      display: flex; align-items: flex-end; padding: 1.5rem;
+    }
+    .detail-hero-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 2rem; color: #fff; margin-bottom: 4px;
+    }
+    .detail-hero-text p { color: rgba(255,255,255,0.75); font-size: 0.9rem; }
+    .detail-body { padding: 1.5rem; }
+    .detail-meta {
+      display: flex; gap: 1.5rem; flex-wrap: wrap;
+      margin-bottom: 1.2rem; padding-bottom: 1.2rem;
+      border-bottom: 1px solid var(--gray-light);
+    }
+    .meta-item { font-size: 0.85rem; color: var(--gray); }
+    .meta-item strong { color: var(--dark); display: block; font-size: 0.95rem; }
+    .places-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem; margin-bottom: 1rem;
+    }
+    .places-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+    .place-card {
+      border-radius: 10px; overflow: hidden;
+      border: 1px solid var(--gray-light);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .place-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .place-card img { width: 100%; height: 130px; object-fit: cover; display: block; }
+    .place-info { padding: 0.75rem; }
+    .place-type {
+      font-size: 0.68rem; font-weight: 700; letter-spacing: 1.2px;
+      text-transform: uppercase; color: var(--primary-light); margin-bottom: 3px;
+    }
+    .place-name { font-weight: 600; font-size: 0.92rem; margin-bottom: 3px; color: var(--dark); }
+    .place-desc { font-size: 0.78rem; color: var(--gray); line-height: 1.5; }
+    .detail-close {
+      float: right; background: none; border: none;
+      font-size: 1.3rem; cursor: pointer; color: var(--gray); padding: 0 0.5rem;
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Wander<span>Way</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="destinations.html" class="active">Trips</a>
+    <a href="hotels.html">Hotels</a>
+    <a href="cabs.html">Cabs</a>
+    <a href="combos.html">Combos</a>
+    <a href="mybookings.html">My Bookings</a>
+    <span id="nav-user"></span>
+    <a href="login.html" class="btn-nav">Login</a>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>Explore Destinations</h1>
+  <p>Click any destination to see places to visit, best time to go, and booking options</p>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div id="page-alert"></div>
+
+    <!-- Search & Filter -->
+    <div style="display:flex; gap:1rem; flex-wrap:wrap; align-items:center; margin-bottom:1.8rem;">
+      <input type="text" id="dest-search" placeholder="Search by city, state or category..."
+        style="flex:1; min-width:220px; padding:0.65rem 1rem; border:1.5px solid #e5e0d8; border-radius:8px; font-family:inherit; font-size:0.95rem; outline:none; background:#fff;"/>
+      <select id="cat-filter"
+        style="padding:0.65rem 1rem; border:1.5px solid #e5e0d8; border-radius:8px; font-family:inherit; font-size:0.9rem; outline:none; background:#fff; color:var(--dark);">
+        <option value="">All Categories</option>
+        <option>Beach</option>
+        <option>Mountain</option>
+        <option>Heritage</option>
+        <option>Nature</option>
+        <option>Adventure</option>
+      </select>
+    </div>
+
+    <!-- Detail Panel (shown when a destination is clicked) -->
+    <div class="detail-panel" id="detail-panel">
+      <div class="detail-hero">
+        <img id="detail-img" src="" alt=""/>
+        <div class="detail-hero-overlay">
+          <div class="detail-hero-text">
+            <h2 id="detail-name"></h2>
+            <p id="detail-state"></p>
+          </div>
+        </div>
+      </div>
+      <div class="detail-body">
+        <button class="detail-close" onclick="closeDetail()">✕ Close</button>
+        <div class="detail-meta">
+          <div class="meta-item"><strong id="detail-best-time"></strong>Best time to visit</div>
+          <div class="meta-item"><strong id="detail-duration"></strong>Recommended stay</div>
+          <div class="meta-item"><strong id="detail-price"></strong>Starting price</div>
+          <div class="meta-item"><strong id="detail-category"></strong>Category</div>
+        </div>
+        <p id="detail-desc" style="color:var(--gray); line-height:1.75; margin-bottom:1.5rem; font-size:0.95rem;"></p>
+
+        <div class="places-title">Places to visit in <span id="detail-name-2"></span></div>
+        <div class="places-grid" id="places-grid"></div>
+
+        <button class="btn btn-primary" id="detail-book-btn" style="margin-top:0.5rem;">Book This Trip →</button>
+      </div>
+    </div>
+
+    <!-- Destination Cards Grid -->
+    <div class="cards-grid" id="destinations-grid">
+      <p class="text-muted">Loading destinations...</p>
+    </div>
+  </div>
+</section>
+
+<!-- Booking Modal -->
+<div class="modal-overlay" id="booking-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="booking-item-name">Book Trip</h3>
+      <button class="modal-close" onclick="closeModal('booking-modal')">✕</button>
+    </div>
+    <div id="modal-alert"></div>
+    <form id="booking-form">
+      <div class="form-group">
+        <label>Travel Date</label>
+        <input type="date" id="booking-date" required/>
+      </div>
+      <div class="form-group">
+        <label id="booking-type-label">Number of Persons</label>
+        <input type="number" id="booking-qty" value="1" min="1" max="20" required/>
+      </div>
+      <div class="form-group">
+        <label>Special Notes (optional)</label>
+        <textarea id="booking-notes" rows="2" placeholder="Any special requests..."></textarea>
+      </div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1rem; padding:0.75rem; background:var(--gray-light); border-radius:8px;">
+        <span style="color:var(--gray); font-size:0.9rem;">Per person: <span id="booking-unit-price"></span></span>
+        <span style="font-weight:700; font-size:1.1rem; color:var(--primary)">Total: <span id="booking-total"></span></span>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Confirm Booking ✓</button>
+    </form>
+  </div>
+</div>
+
+<footer><p>© 2024 <span>WanderWay</span></p></footer>
+<script src="app.js"></script>
+<script>
+  const q = new URLSearchParams(location.search).get('q');
+  if (q) document.getElementById('dest-search').value = q;
+
+  document.getElementById('cat-filter').addEventListener('change', function() {
+    loadDestinations(document.getElementById('dest-search').value, this.value);
+  });
+
+  let allDestinations = [];
+
+  async function loadDestinations(query = '', category = '') {
+    const grid = document.getElementById('destinations-grid');
+    grid.innerHTML = '<p class="text-muted">Loading...</p>';
+    try {
+      const data = await api(`/destinations?q=${query}`);
+      allDestinations = data;
+      const filtered = category ? data.filter(d => d.category === category) : data;
+      if (!filtered.length) { grid.innerHTML = '<p class="text-muted text-center" style="padding:2rem">No destinations found.</p>'; return; }
+      grid.innerHTML = filtered.map(d => `
+        <div class="card dest-card" onclick="showDetail('${d._id}')">
+          <img class="card-img" src="${d.image}" alt="${d.name}" onerror="this.style.display='none'"/>
+          <div class="card-body">
+            <div class="card-tag">${d.category} &middot; ${d.state}</div>
+            <div class="card-title">${d.name}</div>
+            <div class="card-desc">${d.description.substring(0,90)}...</div>
+            <div class="card-footer">
+              <div class="card-price">&#8377;${d.price.toLocaleString()} <small>/person</small></div>
+              <span style="font-size:0.78rem; color:var(--primary-light); font-weight:600;">View details →</span>
+            </div>
+          </div>
+        </div>`).join('');
+    } catch(err) {
+      grid.innerHTML = `<p class="alert alert-error">${err.message}</p>`;
+    }
+  }
+
+  function showDetail(id) {
+    const d = allDestinations.find(x => x._id === id);
+    if (!d) return;
+
+    document.getElementById('detail-img').src      = d.image;
+    document.getElementById('detail-name').textContent  = d.name;
+    document.getElementById('detail-name-2').textContent = d.name;
+    document.getElementById('detail-state').textContent = d.state;
+    document.getElementById('detail-best-time').textContent = d.best_time;
+    document.getElementById('detail-duration').textContent  = d.duration;
+    document.getElementById('detail-price').textContent  = '₹' + d.price.toLocaleString() + '/person';
+    document.getElementById('detail-category').textContent = d.category;
+    document.getElementById('detail-desc').textContent  = d.description;
+
+    const pg = document.getElementById('places-grid');
+    if (d.places_to_visit && d.places_to_visit.length) {
+      pg.innerHTML = d.places_to_visit.map(p => `
+        <div class="place-card">
+          <img src="${p.image}" alt="${p.name}" onerror="this.style.background='#e5e0d8'"/>
+          <div class="place-info">
+            <div class="place-type">${p.type}</div>
+            <div class="place-name">${p.name}</div>
+            <div class="place-desc">${p.description}</div>
+          </div>
+        </div>`).join('');
+    } else {
+      pg.innerHTML = '<p class="text-muted">Places info not available.</p>';
+    }
+
+    document.getElementById('detail-book-btn').onclick = () => openBookingModal(d, 'trip');
+
+    const panel = document.getElementById('detail-panel');
+    panel.classList.add('open');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function closeDetail() {
+    document.getElementById('detail-panel').classList.remove('open');
+  }
+
+  loadDestinations(q || '');
+
+  document.getElementById('dest-search').addEventListener('input', function() {
+    loadDestinations(this.value, document.getElementById('cat-filter').value);
+  });
+</script>
+</body>
+</html>

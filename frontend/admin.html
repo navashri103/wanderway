@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin — WanderWay</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="admin-layout">
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+    <div class="sidebar-logo">⚙ Admin</div>
+    <a href="#" data-section="dashboard" class="active" onclick="adminShowSection('dashboard')">📊 Dashboard</a>
+    <a href="#" data-section="bookings"  onclick="adminShowSection('bookings')">📋 All Bookings</a>
+    <a href="#" data-section="users"     onclick="adminShowSection('users')">👥 Users</a>
+    <a href="#" data-section="add-dest"  onclick="adminShowSection('add-dest')">🗺️ Add Destination</a>
+    <a href="#" data-section="add-hotel" onclick="adminShowSection('add-hotel')">🏨 Add Hotel</a>
+    <a href="#" data-section="add-cab"   onclick="adminShowSection('add-cab')">🚗 Add Cab</a>
+    <a href="#" data-section="add-combo" onclick="adminShowSection('add-combo')">🎁 Add Combo</a>
+    <a href="index.html" style="margin-top:auto">← Back to Site</a>
+    <a href="#" class="logout-btn" style="color:#e63946">🚪 Logout</a>
+  </aside>
+
+  <!-- CONTENT -->
+  <main class="admin-content">
+    <div id="admin-alert"></div>
+
+    <!-- DASHBOARD -->
+    <div id="section-dashboard" class="admin-section">
+      <h2>Dashboard</h2>
+      <div class="admin-stats">
+        <div class="stat-card">
+          <div class="stat-label">Total Users</div>
+          <div class="stat-value" id="stat-users">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bookings</div>
+          <div class="stat-value" id="stat-bookings">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Revenue</div>
+          <div class="stat-value" id="stat-revenue">—</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Destinations</div>
+          <div class="stat-value" id="stat-destinations">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALL BOOKINGS -->
+    <div id="section-bookings" class="admin-section hidden">
+      <h2>All Bookings</h2>
+      <div class="admin-table-wrap">
+        <div style="overflow-x:auto;">
+          <table class="bookings-table">
+            <thead>
+              <tr><th>User</th><th>Item</th><th>Type</th><th>Date</th><th>Total</th><th>Status</th></tr>
+            </thead>
+            <tbody id="admin-bookings-tbody">
+              <tr><td colspan="6" class="text-center text-muted" style="padding:1rem">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- USERS -->
+    <div id="section-users" class="admin-section hidden">
+      <h2>All Users</h2>
+      <div class="admin-table-wrap">
+        <div style="overflow-x:auto;">
+          <table class="bookings-table">
+            <thead>
+              <tr><th>Name</th><th>Email</th><th>Phone</th><th>Role</th></tr>
+            </thead>
+            <tbody id="admin-users-tbody">
+              <tr><td colspan="4" class="text-center text-muted" style="padding:1rem">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- ADD DESTINATION -->
+    <div id="section-add-dest" class="admin-section hidden">
+      <h2>Add Destination</h2>
+      <div class="admin-table-wrap" style="max-width:560px;">
+        <form id="add-destination-form">
+          <div class="form-group"><label>Name</label><input type="text" id="d-name" placeholder="e.g. Goa" required/></div>
+          <div class="form-row">
+            <div class="form-group"><label>Category</label>
+              <select id="d-category">
+                <option>Beach</option><option>Mountain</option><option>City</option><option>Heritage</option><option>Adventure</option>
+              </select>
+            </div>
+            <div class="form-group"><label>Emoji</label><input type="text" id="d-emoji" placeholder="🌊" maxlength="2"/></div>
+          </div>
+          <div class="form-group"><label>Description</label><textarea id="d-description" rows="3" required></textarea></div>
+          <div class="form-group"><label>Price per person (₹)</label><input type="number" id="d-price" required/></div>
+          <button type="submit" class="btn btn-primary">Add Destination</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADD HOTEL -->
+    <div id="section-add-hotel" class="admin-section hidden">
+      <h2>Add Hotel</h2>
+      <div class="admin-table-wrap" style="max-width:560px;">
+        <form id="add-hotel-form">
+          <div class="form-row">
+            <div class="form-group"><label>Hotel Name</label><input type="text" id="h-name" required/></div>
+            <div class="form-group"><label>Location</label><input type="text" id="h-location" placeholder="e.g. Goa Beach" required/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Stars (1–5)</label><input type="number" id="h-stars" min="1" max="5" value="3" required/></div>
+            <div class="form-group"><label>Emoji</label><input type="text" id="h-emoji" placeholder="🏨" maxlength="2"/></div>
+          </div>
+          <div class="form-group"><label>Description</label><textarea id="h-description" rows="3" required></textarea></div>
+          <div class="form-group"><label>Price per night (₹)</label><input type="number" id="h-price" required/></div>
+          <button type="submit" class="btn btn-primary">Add Hotel</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADD CAB -->
+    <div id="section-add-cab" class="admin-section hidden">
+      <h2>Add Cab / Bike</h2>
+      <div class="admin-table-wrap" style="max-width:560px;">
+        <form id="add-cab-form">
+          <div class="form-row">
+            <div class="form-group"><label>Name</label><input type="text" id="c-name" placeholder="e.g. Swift Dzire" required/></div>
+            <div class="form-group"><label>Type</label>
+              <select id="c-type">
+                <option>Cab</option><option>Bike</option><option>Auto</option><option>SUV</option><option>Luxury</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Seats</label><input type="number" id="c-seats" value="4" min="1" max="10" required/></div>
+            <div class="form-group"><label>Emoji</label><input type="text" id="c-emoji" placeholder="🚗" maxlength="2"/></div>
+          </div>
+          <div class="form-group"><label>Description</label><textarea id="c-description" rows="3" required></textarea></div>
+          <div class="form-group"><label>Price per km (₹)</label><input type="number" id="c-price" step="0.5" required/></div>
+          <button type="submit" class="btn btn-primary">Add Cab/Bike</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ADD COMBO -->
+    <div id="section-add-combo" class="admin-section hidden">
+      <h2>Add Combo Pack</h2>
+      <div class="admin-table-wrap" style="max-width:560px;">
+        <form id="add-combo-form">
+          <div class="form-row">
+            <div class="form-group"><label>Combo Name</label><input type="text" id="co-name" placeholder="e.g. Goa Bliss Pack" required/></div>
+            <div class="form-group"><label>Destination</label><input type="text" id="co-destination" placeholder="e.g. Goa" required/></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Duration (days)</label><input type="number" id="co-duration" value="3" min="1" required/></div>
+            <div class="form-group"><label>Total Price/person (₹)</label><input type="number" id="co-price" required/></div>
+          </div>
+          <div class="form-group">
+            <label>What's Included (one per line)</label>
+            <textarea id="co-includes" rows="5" placeholder="3 nights hotel&#10;Return flights&#10;Cab transfers&#10;Breakfast included"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary">Add Combo Pack</button>
+        </form>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+<script>
+  if (!localStorage.getItem('token')) window.location.href = 'login.html';
+  // Default show dashboard
+  adminShowSection('dashboard');
+</script>
+</body>
+</html>

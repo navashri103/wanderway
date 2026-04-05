@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Bookings — WanderWay</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="index.html">Wander<span>Way</span></a>
+  <div class="nav-links">
+    <a href="index.html">Home</a>
+    <a href="destinations.html">Trips</a>
+    <a href="hotels.html">Hotels</a>
+    <a href="cabs.html">Cabs</a>
+    <a href="combos.html">Combos</a>
+    <a href="mybookings.html" class="active">My Bookings</a>
+    <span id="nav-user"></span>
+    <button class="logout-btn btn btn-sm" style="background:transparent;border:1px solid rgba(255,255,255,0.3);color:white;">Logout</button>
+  </div>
+</nav>
+
+<div class="page-header">
+  <h1>📋 My Bookings</h1>
+  <p>View and manage all your travel bookings</p>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div id="page-alert"></div>
+    <div style="background:var(--white); border-radius:var(--radius); padding:1.5rem; box-shadow:var(--shadow); overflow-x:auto;">
+      <table class="bookings-table">
+        <thead>
+          <tr>
+            <th>Item</th>
+            <th>Type</th>
+            <th>Date</th>
+            <th>Qty</th>
+            <th>Total</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="bookings-tbody">
+          <tr><td colspan="6" class="text-center text-muted" style="padding:2rem">Loading...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<footer><p>© 2024 <span>WanderWay</span></p></footer>
+<script src="app.js"></script>
+<script>
+  // Redirect to login if not logged in
+  if (!localStorage.getItem('token')) window.location.href = 'login.html';
+</script>
+</body>
+</html>

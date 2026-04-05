@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MongoDB Viewer — WanderWay</title>
+  <link rel="stylesheet" href="style.css"/>
+  <style>
+    .db-header { background: #0f1f1c; padding: 2rem 1.5rem; }
+    .db-header h1 { font-family: 'Playfair Display', serif; color: #e9c46a; font-size: 1.8rem; margin-bottom: 0.3rem; }
+    .db-header p { color: rgba(255,255,255,0.55); font-size: 0.9rem; }
+
+    .collection-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1.5rem; }
+    .col-tab {
+      padding: 0.5rem 1.1rem; border-radius: 6px; cursor: pointer;
+      font-size: 0.85rem; font-weight: 600;
+      background: var(--white); border: 1.5px solid #e5e0d8;
+      color: var(--gray); transition: all 0.2s;
+    }
+    .col-tab.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .col-tab:hover:not(.active) { border-color: var(--primary-light); color: var(--primary); }
+
+    .collection-panel { display: none; }
+    .collection-panel.active { display: block; }
+
+    .col-info {
+      background: #e1f5ee; border-radius: 8px; padding: 0.75rem 1rem;
+      font-size: 0.85rem; color: #085041; margin-bottom: 1rem;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .col-info strong { font-weight: 700; }
+
+    .json-doc {
+      background: #1c2b29; border-radius: 10px; padding: 1rem 1.2rem;
+      margin-bottom: 1rem; font-family: monospace; font-size: 0.82rem;
+      color: #a8d5c2; line-height: 1.7; overflow-x: auto;
+    }
+    .json-key   { color: #e9c46a; }
+    .json-str   { color: #98d4b0; }
+    .json-num   { color: #f4a261; }
+    .json-bool  { color: #e07070; }
+    .json-null  { color: #999; }
+
+    .schema-box {
+      background: var(--white); border: 1.5px solid #e5e0d8;
+      border-radius: 10px; padding: 1.2rem; margin-bottom: 1.5rem;
+    }
+    .schema-box h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 0.75rem; color: var(--dark); }
+    .schema-field {
+      display: flex; gap: 0.75rem; align-items: flex-start;
+      padding: 0.4rem 0; border-bottom: 1px solid var(--gray-light); font-size: 0.84rem;
+    }
+    .schema-field:last-child { border-bottom: none; }
+    .sf-name { font-family: monospace; color: var(--primary); min-width: 140px; font-weight: 600; }
+    .sf-type { background: #fef3c7; color: #92400e; padding: 1px 7px; border-radius: 4px; font-size: 0.74rem; font-weight: 600; min-width: 70px; text-align: center; }
+    .sf-desc { color: var(--gray); }
+  </style>
+</head>
+<body>
+
+<div class="db-header">
+  <h1>MongoDB Database Viewer</h1>
+  <p>Live view of all data stored in the WanderWay database &mdash; wanderway (MongoDB)</p>
+</div>
+
+<section class="section">
+  <div class="container">
+
+    <!-- HOW IT WORKS explanation -->
+    <div style="background:var(--white); border-radius:var(--radius); padding:1.5rem; box-shadow:var(--shadow); margin-bottom:2rem;">
+      <h2 style="font-family:'Playfair Display',serif; font-size:1.4rem; margin-bottom:1rem;">How MongoDB stores data in this project</h2>
+      <p style="color:var(--gray); font-size:0.92rem; line-height:1.75; margin-bottom:1rem;">
+        MongoDB stores data as <strong>documents</strong> (similar to JSON / Python dictionaries). Related documents are grouped into <strong>collections</strong> (similar to tables in SQL). This project has <strong>6 collections</strong>:
+      </p>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap:0.75rem;">
+        <div style="padding:0.75rem; background:var(--gray-light); border-radius:8px; font-size:0.85rem;"><strong style="color:var(--primary);">users</strong><br/>Stores registered user accounts</div>
+        <div style="padding:0.75rem; background:var(--gray-light); border-radius:8px; font-size:0.85rem;"><strong style="color:var(--primary);">destinations</strong><br/>Trip packages + places to visit</div>
+        <div style="padding:0.75rem; background:var(--gray-light); border-radius:8px; font-size:0.85rem;"><strong style="color:var(--primary);">hotels</strong><br/>Hotel listings with pricing</div>
+        <div style="padding:0.75rem; background:var(--gray-light); border-radius:8px; font-size:0.85rem;"><strong style="color:var(--primary);">cabs</strong><br/>Cab and bike rental options</div>
+        <div style="padding:0.75rem; background:var(--gray-light); border-radius:8px; font-size:0.85rem;"><strong style="color:var(--primary);">combos</strong><br/>All-inclusive travel packages</div>
+        <div style="padding:0.75rem; background:var(--gray-light); border-radius:8px; font-size:0.85rem;"><strong style="color:var(--primary);">bookings</strong><br/>Every booking made by users</div>
+      </div>
+    </div>
+
+    <div id="login-required" class="alert alert-error hidden">Please login as admin to view the database. <a href="login.html" style="color:var(--danger);font-weight:700">Login here →</a></div>
+    <div id="loading-msg" style="text-align:center; color:var(--gray); padding:2rem;">Loading database...</div>
+    <div id="db-content" class="hidden">
+
+      <!-- COLLECTION TABS -->
+      <div class="collection-tabs" id="col-tabs"></div>
+
+      <!-- PANELS -->
+      <div id="col-panels"></div>
+    </div>
+  </div>
+</section>
+
+<footer><p>© 2024 <span>WanderWay</span> &mdash; MongoDB Database Viewer</p></footer>
+
+<script src="app.js"></script>
+<script>
+const SCHEMAS = {
+  users: [
+    {name:'_id', type:'ObjectId', desc:'Auto-generated unique ID by MongoDB'},
+    {name:'name', type:'String', desc:'Full name of the user'},
+    {name:'email', type:'String', desc:'Email address used to login'},
+    {name:'phone', type:'String', desc:'Phone number (optional)'},
+    {name:'role', type:'String', desc:'"user" or "admin"'},
+  ],
+  destinations: [
+    {name:'_id', type:'ObjectId', desc:'Auto-generated unique ID'},
+    {name:'name', type:'String', desc:'Name of the destination city'},
+    {name:'category', type:'String', desc:'Beach / Mountain / Heritage / Nature / Adventure'},
+    {name:'state', type:'String', desc:'Indian state this destination is in'},
+    {name:'description', type:'String', desc:'Full description of the destination'},
+    {name:'best_time', type:'String', desc:'Best months to visit'},
+    {name:'duration', type:'String', desc:'Recommended trip duration'},
+    {name:'price', type:'Number', desc:'Starting price per person in INR'},
+    {name:'image', type:'String', desc:'URL of the destination cover photo'},
+    {name:'places_to_visit', type:'Array', desc:'List of tourist places with name, type, description, image'},
+  ],
+  hotels: [
+    {name:'_id', type:'ObjectId', desc:'Auto-generated unique ID'},
+    {name:'name', type:'String', desc:'Hotel name'},
+    {name:'location', type:'String', desc:'City or area where hotel is located'},
+    {name:'stars', type:'Number', desc:'Star rating (1 to 5)'},
+    {name:'description', type:'String', desc:'What the hotel offers'},
+    {name:'price_per_night', type:'Number', desc:'Cost per night in INR'},
+    {name:'image', type:'String', desc:'Photo URL of the hotel'},
+  ],
+  cabs: [
+    {name:'_id', type:'ObjectId', desc:'Auto-generated unique ID'},
+    {name:'name', type:'String', desc:'Vehicle name'},
+    {name:'type', type:'String', desc:'Cab / Bike / Auto / SUV / Luxury'},
+    {name:'seats', type:'Number', desc:'Seating capacity'},
+    {name:'description', type:'String', desc:'Details about the vehicle'},
+    {name:'price_per_km', type:'Number', desc:'Fare per kilometre in INR'},
+    {name:'image', type:'String', desc:'Photo URL'},
+  ],
+  combos: [
+    {name:'_id', type:'ObjectId', desc:'Auto-generated unique ID'},
+    {name:'name', type:'String', desc:'Package name'},
+    {name:'destination', type:'String', desc:'City this combo is for'},
+    {name:'duration', type:'Number', desc:'Number of days'},
+    {name:'total_price', type:'Number', desc:'All-inclusive price per person'},
+    {name:'includes', type:'Array', desc:'List of things included in the package'},
+    {name:'image', type:'String', desc:'Photo URL'},
+  ],
+  bookings: [
+    {name:'_id', type:'ObjectId', desc:'Auto-generated unique ID'},
+    {name:'user_id', type:'String', desc:'ID of the user who made the booking'},
+    {name:'user_name', type:'String', desc:'Name of the user'},
+    {name:'user_email', type:'String', desc:'Email of the user'},
+    {name:'type', type:'String', desc:'trip / hotel / cab / combo'},
+    {name:'item_name', type:'String', desc:'Name of the booked item'},
+    {name:'date', type:'String', desc:'Date of travel or check-in'},
+    {name:'qty', type:'Number', desc:'Number of persons / nights / km'},
+    {name:'total_price', type:'Number', desc:'Total amount paid'},
+    {name:'status', type:'String', desc:'"confirmed" or "cancelled"'},
+    {name:'notes', type:'String', desc:'Any special requests by the user'},
+  ],
+};
+
+function syntaxHighlight(obj) {
+  const json = JSON.stringify(obj, null, 2);
+  return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, (match) => {
+    let cls = 'json-num';
+    if (/^"/.test(match)) {
+      cls = /:$/.test(match) ? 'json-key' : 'json-str';
+    } else if (/true|false/.test(match)) cls = 'json-bool';
+    else if (/null/.test(match)) cls = 'json-null';
+    return `<span class="${cls}">${match}</span>`;
+  });
+}
+
+function renderCollection(name, docs, schema) {
+  const schemaHtml = `
+    <div class="schema-box">
+      <h4>Schema — fields stored in each "${name}" document</h4>
+      ${schema.map(f => `
+        <div class="schema-field">
+          <span class="sf-name">${f.name}</span>
+          <span class="sf-type">${f.type}</span>
+          <span class="sf-desc">${f.desc}</span>
+        </div>`).join('')}
+    </div>`;
+
+  const docsHtml = docs.length
+    ? docs.slice(0,5).map(d => `<div class="json-doc"><pre>${syntaxHighlight(d)}</pre></div>`).join('')
+    : '<p class="text-muted" style="padding:1rem">No documents in this collection yet.</p>';
+
+  return `
+    <div class="col-info">
+      <span>Collection: <strong>${name}</strong> &mdash; ${docs.length} document${docs.length !== 1 ? 's' : ''} stored</span>
+      <span style="font-size:0.78rem">Showing first ${Math.min(docs.length,5)} document(s)</span>
+    </div>
+    ${schemaHtml}
+    <h4 style="font-size:0.95rem; font-weight:600; margin-bottom:0.75rem; color:var(--dark);">Live documents from MongoDB:</h4>
+    ${docsHtml}`;
+}
+
+async function loadDB() {
+  if (!getToken()) {
+    document.getElementById('loading-msg').classList.add('hidden');
+    document.getElementById('login-required').classList.remove('hidden');
+    return;
+  }
+  try {
+    const data = await api('/admin/db-viewer');
+    document.getElementById('loading-msg').classList.add('hidden');
+    document.getElementById('db-content').classList.remove('hidden');
+
+    const names = ['users','destinations','hotels','cabs','combos','bookings'];
+    const tabsEl = document.getElementById('col-tabs');
+    const panelsEl = document.getElementById('col-panels');
+
+    names.forEach((name, i) => {
+      const btn = document.createElement('div');
+      btn.className = 'col-tab' + (i === 0 ? ' active' : '');
+      btn.textContent = name + ' (' + data[name].length + ')';
+      btn.onclick = () => {
+        document.querySelectorAll('.col-tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.collection-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById('panel-' + name).classList.add('active');
+      };
+      tabsEl.appendChild(btn);
+
+      const panel = document.createElement('div');
+      panel.className = 'collection-panel' + (i === 0 ? ' active' : '');
+      panel.id = 'panel-' + name;
+      panel.innerHTML = renderCollection(name, data[name], SCHEMAS[name] || []);
+      panelsEl.appendChild(panel);
+    });
+  } catch (err) {
+    document.getElementById('loading-msg').textContent = 'Error: ' + err.message + ' — Make sure you are logged in as admin.';
+  }
+}
+
+loadDB();
+</script>
+</body>
+</html>

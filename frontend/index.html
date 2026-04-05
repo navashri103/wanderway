@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WanderWay — Travel Management</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">Wander<span>Way</span></a>
+  <div class="nav-links">
+    <a href="index.html" class="active">Home</a>
+    <a href="destinations.html">Trips</a>
+    <a href="hotels.html">Hotels</a>
+    <a href="cabs.html">Cabs</a>
+    <a href="combos.html">Combos</a>
+    <a href="mybookings.html">My Bookings</a>
+    <span id="nav-user"></span>
+    <a href="login.html" class="btn-nav">Login</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">✈ Your complete travel partner</div>
+    <h1>Explore the world<br/>your way, <em>every day</em></h1>
+    <p>Book trips, hotels, cabs and combo packages — all in one place. Simple, fast, and made for travellers like you.</p>
+    <div class="hero-btns">
+      <a href="destinations.html" class="btn btn-accent">Browse Destinations</a>
+      <a href="combos.html" class="btn btn-outline">View Combos</a>
+    </div>
+
+    <div class="search-bar">
+      <div class="field">
+        <label>Destination</label>
+        <input type="text" placeholder="Where to?" id="hero-search"/>
+      </div>
+      <div class="field">
+        <label>Category</label>
+        <select>
+          <option>All Types</option>
+          <option>Beach</option>
+          <option>Mountain</option>
+          <option>City</option>
+          <option>Heritage</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Date</label>
+        <input type="date"/>
+      </div>
+      <button class="btn btn-primary" onclick="goSearch()">Search</button>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2>Everything you need to travel</h2>
+      <p>From the moment you plan to the moment you return — we've got you.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-item">
+        <span class="feature-icon">🗺️</span>
+        <h3>Curated Destinations</h3>
+        <p>Hand-picked trips across beaches, mountains, cities, and heritage sites.</p>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🏨</span>
+        <h3>Hotel Booking</h3>
+        <p>Find and book hotels near your destination with real-time availability.</p>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🚗</span>
+        <h3>Cab & Bike Rental</h3>
+        <p>Book cabs, bikes and autos to get around once you reach your destination.</p>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🎁</span>
+        <h3>Combo Packs</h3>
+        <p>All-inclusive packages with trip + hotel + cab bundled at the best price.</p>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">📋</span>
+        <h3>Manage Bookings</h3>
+        <p>View, track and cancel all your bookings from one simple dashboard.</p>
+      </div>
+      <div class="feature-item">
+        <span class="feature-icon">🔒</span>
+        <h3>Secure & Simple</h3>
+        <p>Your account and payments are always safe with us.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- POPULAR DESTINATIONS (static preview) -->
+<section class="section section-alt">
+  <div class="container">
+    <div class="section-header">
+      <h2>Popular Destinations</h2>
+      <p>Some of the most loved places our travellers keep returning to.</p>
+    </div>
+    <div class="cards-grid">
+      <div class="card">
+        <div class="card-img-placeholder">🏖️</div>
+        <div class="card-body">
+          <div class="card-tag">Beach</div>
+          <div class="card-title">Goa</div>
+          <div class="card-desc">Sun, sand, and endless fun. Perfect for a weekend getaway with friends or family.</div>
+          <div class="card-footer">
+            <div class="card-price">₹8,999 <small>/person</small></div>
+            <a href="destinations.html" class="btn btn-primary btn-sm">Explore</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-img-placeholder">🏔️</div>
+        <div class="card-body">
+          <div class="card-tag">Mountain</div>
+          <div class="card-title">Manali</div>
+          <div class="card-desc">Snow-capped peaks, adventure sports and cozy cafes in the heart of Himachal Pradesh.</div>
+          <div class="card-footer">
+            <div class="card-price">₹12,499 <small>/person</small></div>
+            <a href="destinations.html" class="btn btn-primary btn-sm">Explore</a>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-img-placeholder">🕌</div>
+        <div class="card-body">
+          <div class="card-tag">Heritage</div>
+          <div class="card-title">Rajasthan</div>
+          <div class="card-desc">Palaces, forts, and vibrant culture. Experience the royal charm of India.</div>
+          <div class="card-footer">
+            <div class="card-price">₹10,299 <small>/person</small></div>
+            <a href="destinations.html" class="btn btn-primary btn-sm">Explore</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="text-center mt-2">
+      <a href="destinations.html" class="btn btn-primary">View All Destinations →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p>© 2024 <span>WanderWay</span> · Built with ❤️ for college project</p>
+</footer>
+
+<script src="app.js"></script>
+<script>
+function goSearch() {
+  const q = document.getElementById('hero-search').value;
+  if (q) window.location.href = 'destinations.html?q=' + encodeURIComponent(q);
+  else   window.location.href = 'destinations.html';
+}
+</script>
+</body>
+</html>
