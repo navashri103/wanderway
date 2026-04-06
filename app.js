@@ -1,4 +1,4 @@
-const API = 'http://127.0.0.1:5000';
+const API = 'https://wanderway-backend.up.railway.app';
 
 function getToken() { return localStorage.getItem('token'); }
 function getUser()  { return JSON.parse(localStorage.getItem('user') || 'null'); }
